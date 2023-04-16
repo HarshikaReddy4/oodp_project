@@ -1,0 +1,106 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+using namespace std;
+
+// Define variables
+vector<int> available_rooms = {1, 2, 3, 4, 5};
+vector<int> occupied_rooms = {};
+map<string, int> menu = {{"Burger", 10}, {"Pizza", 12}, {"Pasta", 8}};
+map<string, int> room_prices = {{"Single", 50}, {"Double", 80}, {"Suite", 120}};
+vector<string> feedbacks = {};
+
+// Define functions
+vector<int> check_room_availability() {
+    return available_rooms;
+}
+
+bool book_room(int room_number) {
+    auto it = find(available_rooms.begin(), available_rooms.end(), room_number);
+    if (it != available_rooms.end()) {
+        available_rooms.erase(it);
+        occupied_rooms.push_back(room_number);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+map<string, int> display_menu() {
+    return menu;
+}
+
+map<string, int> display_room_prices() {
+    return room_prices;
+}
+
+int check_out(int room_number, int days) {
+    auto it = find(occupied_rooms.begin(), occupied_rooms.end(), room_number);
+    if (it != occupied_rooms.end()) {
+        occupied_rooms.erase(it);
+        available_rooms.push_back(room_number);
+        string room_type;
+        for (auto const& [key, val] : room_prices) {
+            if (val == room_prices[room_type]) {
+                room_type = key;
+                break;
+            }
+        }
+        int total_price = days * room_prices[room_type];
+        return total_price;
+    }
+    else {
+        return -1;
+    }
+}
+
+void add_feedback(string feedback) {
+    feedbacks.push_back(feedback);
+}
+
+int generate_bill(int room_number, int days, vector<string> food_items) {
+    string room_type;
+    for (auto const& [key, val] : room_prices) {
+        if (val == room_prices[room_type]) {
+            room_type = key;
+            break;
+        }
+    }
+    int room_price = room_prices[room_type];
+    int food_price = 0;
+    for (string item : food_items) {
+        food_price += menu[item];
+    }
+    int total_price = (room_price * days) + food_price;
+    return total_price;
+}
+
+// Usage example
+int main() {
+    cout << "Available rooms: ";
+    for (int room : check_room_availability()) {
+        cout << room << " ";
+    }
+    cout << endl;
+    book_room(1);
+    cout << "Available rooms: ";
+    for (int room : check_room_availability()) {
+        cout << room << " ";
+    }
+    cout << endl;
+    cout << "Menu: " << endl;
+    for (auto const& [item, price] : display_menu()) {
+        cout << item << ": " << price << endl;
+    }
+    cout << "Room prices: " << endl;
+    for (auto const& [type, price] : display_room_prices()) {
+        cout << type << ": " << price << endl;
+    }
+    cout << "Check out: " << check_out(1, 3) << endl;
+    add_feedback("Great service!");
+    vector<string> food_items = {"Burger", "Pizza"};
+    cout << "Bill: " << generate_bill(1, 3, food_items) << endl;
+    return 0;
+}
